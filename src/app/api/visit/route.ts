@@ -1,6 +1,16 @@
+import { getCorsHeaders } from "@/lib/cors";
 import { VISITOR_KEY } from "@/lib/globals";
 import { redis } from "@/lib/redis";
 import { NextRequest, NextResponse } from "next/server";
+
+export async function OPTIONS(req: NextRequest) {
+  const origin = req.headers.get("origin");
+
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCorsHeaders(origin),
+  });
+}
 
 export async function POST(req: NextRequest) {
     const uid = req.nextUrl.searchParams.get("uid")
