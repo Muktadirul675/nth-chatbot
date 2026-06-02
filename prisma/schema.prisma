@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MessageRole{
+  user @map("user")
+  assistant @map("assistant")
+  system @map("system")
+  tool @map("TOOL")
+}
+
+model ChatSession {
+  id             String   @id @default(cuid())
+  uid            String   @unique
+  lead_captured  Boolean  @default(false)
+  escalated      Boolean  @default(false)
+
+  lead           Lead?
+
+  messages       Message[]
+
+  createdAt      DateTime @default(now())
+}
+
+model Message{
+  id String @id @default(cuid())
+  message String
+  role MessageRole @default(assistant)
+  chat_session_id String
+  chat_session ChatSession @relation(fields: [chat_session_id], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Information{
+  id String @id @default(cuid())
+  content String
+  url String?
+  chunks InformationChunk[]
+
+  createdAt DateTime @default(now())
+}
+
+model InformationChunk{
+  id String @id @default(cuid())
+  content String
+  url String?
+  informationId String
+  information Information @relation(fields: [informationId], references: [id], onDelete: Cascade)
+
+  embedding     Unsupported("vector(768)")?
+  createdAt DateTime @default(now())
+}
+
+model Lead {
+  id              String @id @default(cuid())
+  name            String
+  email           String
+  qualified       Boolean @default(false)
+
+  chat_session_id String @unique
+  chat_session    ChatSession @relation(fields: [chat_session_id], references: [id])
+
+  createdAt       DateTime @default(now())
+}

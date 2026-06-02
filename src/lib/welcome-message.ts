@@ -1,0 +1,1 @@
+export const welcome_message = "Hello, I am your Nth Generation AI concierge. How can I help you today?"
