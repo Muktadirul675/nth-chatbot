@@ -23,7 +23,7 @@ export default async function InformationPage({
       <div className="mb-6">
         <div className="flex justify-between">
           <div className="text-xl font-semibold text-slate-900">
-            Informations
+            Information
           </div>
           <Link className="bg-primary text-white px-2 py-1.5 rounded cursor-pointer flex items-center gap-2" href="/dashboard/informations/add">
             <BiPlus size={10}/> Add New

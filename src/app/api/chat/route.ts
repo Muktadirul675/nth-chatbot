@@ -15,9 +15,33 @@ export async function POST(req: NextRequest) {
     where: { uid: uid }, select: { id: true, uid: true }
   })
 
+  const now = new Date();
+
+  // DDMMYY
+  const datePart =
+    String(now.getDate()).padStart(2, "0") +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    String(now.getFullYear()).slice(-2);
+
+  // HHMMSS → number
+  const timeNumber =
+    now.getHours() * 10000 +
+    now.getMinutes() * 100 +
+    now.getSeconds();
+
+  // convert to HEX
+  const hexPart = timeNumber.toString(16).toUpperCase();
+
+  // AM / PM flag
+  const ampm = now.getHours() >= 12 ? "P" : "A";
+
+  // final ID
+  const formattedID = `N${datePart}${hexPart}${ampm}`;
+
   if (!chat_session) {
     const new_chat_session = await prisma.chatSession.create({
       data: {
+        id: formattedID,
         uid: uid
       },
       select: { id: true, uid: true }

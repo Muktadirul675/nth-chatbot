@@ -25,7 +25,7 @@ export default async function DashboradLayout({ children }: { children: ReactNod
             </Link>
             <Link href={'/dashboard/informations'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
                 <IoInformation className="text-lg" />
-                Informations
+                Information
             </Link>
             <Link href={'/dashboard/leads'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
                 <BiChat className="text-lg" />
