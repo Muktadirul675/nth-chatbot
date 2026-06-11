@@ -1,9 +1,27 @@
-import { SETTINGS_PASSWORD_KEY, SETTINGS_USERNAME_KEY } from "@/lib/globals";
+import { ADMIN_ROLE, MODERATOR_ROLE, SETTINGS_MODERATOR_PASS_PREFIX, SETTINGS_PASSWORD_KEY, SETTINGS_USERNAME_KEY } from "@/lib/globals";
+import bcrypt from "bcryptjs";
 import { getSetting } from "./settings";
+import { prisma } from "@/lib/prisma";
 
-export async function verifyUser(username: string, password: string): Promise<boolean> {
-    const dbUsername = await getSetting(SETTINGS_USERNAME_KEY) ?? ""
-    const dbPassword = await getSetting(SETTINGS_PASSWORD_KEY) ?? ""
-    if (dbUsername === username && dbPassword === password) return true;
-    return false;
+export async function verifyUser(username: string, password: string) {
+    const user = await prisma.user.findUnique({
+        where: { username: username },
+        select:{
+            password: true,
+            role: true, 
+            username: true
+        }
+    })
+    if(!user){
+        throw new Error("User Not Found")
+    }
+    const isPassValid = await bcrypt.compare(password, user.password)
+    if(!isPassValid){
+        throw new Error("Invalid Credentials")
+    }
+    return {
+        name: user.username,
+        role: user.role
+    }
 }
+
