@@ -168,7 +168,7 @@ export default function SettingsForm({
             </div>
 
             {/* MAIL SETTINGS */}
-            <div className="space-y-5 mb-8 border-t border-[#eef0f1] pt-5">
+            <div className="space-y-5 mb-8">
 
                 <label className="text-xs font-medium text-[#687076] uppercase tracking-wider flex items-center gap-1.5">
                     <LuMail className="w-3.5 h-3.5" />
