@@ -163,63 +163,8 @@ export default function SettingsForm({
                     Settings
                 </h1>
                 <p className="text-sm text-[#687076] mt-1">
-                    Manage authentication and transcript receivers.
+                    Manage transcript receivers.
                 </p>
-            </div>
-
-            {/* AUTH */}
-            <div className="space-y-5 mb-8">
-
-                {/* Username */}
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[#687076] flex items-center gap-1.5 uppercase tracking-wider">
-                        <LuUser className="w-3.5 h-3.5" />
-                        Username
-                    </label>
-
-                    <input
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="px-3 py-2 text-sm bg-white border border-[#dcdede] focus:outline-none focus:border-[#df2a34] focus:ring-1 focus:ring-[#df2a34]"
-                    />
-                </div>
-
-                {/* Password */}
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[#687076] flex items-center gap-1.5 uppercase tracking-wider">
-                        <LuLock className="w-3.5 h-3.5" />
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                            setIsPasswordChanged(true);
-                        }}
-                        className="px-3 py-2 text-sm bg-white border border-[#dcdede] focus:outline-none focus:border-[#df2a34] focus:ring-1 focus:ring-[#df2a34]"
-                    />
-                </div>
-
-                {/* Confirm Password */}
-                {isPasswordChanged && (
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-medium text-[#687076] flex items-center gap-1.5 uppercase tracking-wider">
-                            <LuLock className="w-3.5 h-3.5" />
-                            Confirm Password
-                        </label>
-
-                        <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) =>
-                                setConfirmPassword(e.target.value)
-                            }
-                            className="px-3 py-2 text-sm bg-white border border-[#dcdede] focus:outline-none focus:border-[#df2a34] focus:ring-1 focus:ring-[#df2a34]"
-                        />
-                    </div>
-                )}
             </div>
 
             {/* MAIL SETTINGS */}
