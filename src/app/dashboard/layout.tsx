@@ -29,7 +29,7 @@ export default async function DashboradLayout({ children }: { children: ReactNod
                 <BiHome className="text-lg" />
                 Dashboard
             </Link>
-            {<Link href={'/dashboard/users'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
+            {superAdmin && <Link href={'/dashboard/users'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
                 <LuUsers className="text-lg" />
                 Users
             </Link>}
