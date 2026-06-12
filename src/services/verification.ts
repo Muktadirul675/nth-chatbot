@@ -9,7 +9,8 @@ export async function verifyUser(username: string, password: string) {
         select:{
             password: true,
             role: true, 
-            username: true
+            username: true,
+            id: true,
         }
     })
     if(!user){
@@ -20,8 +21,8 @@ export async function verifyUser(username: string, password: string) {
         throw new Error("Invalid Credentials")
     }
     return {
-        name: user.username,
-        role: user.role
+        id:user.id,
+        name: user.username
     }
 }
 

@@ -1,4 +1,5 @@
 import { auth, signOut } from "@/auth";
+import { isSuperAdmin } from "@/services/users";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
@@ -11,25 +12,27 @@ import { LuUsers } from "react-icons/lu";
 export const dynamic = "force-dynamic";
 
 export default async function DashboradLayout({ children }: { children: ReactNode }) {
-    // const session = await auth()
-    // if (!session) {
-    //     redirect("/login")
-    // }
+    const session = await auth()
+    if (!session || !session.user) {
+        redirect("/login")
+    }
+    const superAdmin = await isSuperAdmin(session.user.id as string)
+
     return <div className="flex items-start">
         <Toaster />
         <div className="w-fit sticky top-0 flex flex-col p-3 border-r border-slate-800 h-screen bg-primary text-white">
             <h3 className="text-lg font-semibold px-2">
-                {/* {session.user?.name} */}
+                {session.user.name}
             </h3>
             <div className="my-2"></div>
             <Link href={'/dashboard'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
                 <BiHome className="text-lg" />
                 Dashboard
             </Link>
-            <Link href={'/dashboard/users'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
+            {<Link href={'/dashboard/users'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
                 <LuUsers className="text-lg" />
                 Users
-            </Link>
+            </Link>}
             <Link href={'/dashboard/informations'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
                 <IoInformation className="text-lg" />
                 Information
@@ -42,10 +45,10 @@ export default async function DashboradLayout({ children }: { children: ReactNod
                 <BiChat className="text-lg" />
                 Chat Sessions
             </Link>
-            <Link href={'/dashboard/settings'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
+            {superAdmin && <Link href={'/dashboard/settings'} className="flex mt-5 items-center gap-2 rounded p-2 hover:bg-slate-100 text-uppercase text-white hover:text-black">
                 <BsGear className="text-lg" />
                 Settings
-            </Link>
+            </Link>}
             <form action={async () => {
                 "use server";
                 await signOut()

@@ -15,6 +15,19 @@ export async function createUser(username: string, pass: string, role: UserRole)
     return user;
 }
 
+export async function isSuperAdmin(id: string) {
+    const user = await prisma.user.findUnique({
+        where: { id },
+        select: {
+            role: true
+        }
+    })
+    if(user?.role === UserRole.SUPER_ADMIN){
+        return true;
+    }
+    return false;
+}
+
 export async function updateUserPassword(id: string, pass: string) {
     const password = await bcrypt.hash(pass, 10)
     const user = await prisma.user.update({

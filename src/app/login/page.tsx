@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
@@ -12,7 +12,9 @@ export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const session = useSession(
 
+    )
     async function handleSubmit(e: FormEvent) {
         e.preventDefault();
 
@@ -22,25 +24,31 @@ export default function LoginPage() {
             const result = await signIn("credentials", {
                 username,
                 password,
-                redirect: false,
+                redirect: false, // Prevents hard page reloads
             });
 
-            if (result?.error) {
+            console.log(JSON.stringify(result, null, 2))
+
+            // 🚨 NEXTAUTH V5 CHECK: Ensure result exists and is marked as 'ok'
+            if (!result || result.error || !result.ok) {
+                console.error("Auth status failed:", result);
                 toast.error("Invalid username or password");
                 return;
             }
+            console.log(`Session: ${JSON.stringify(session, null, 2)}`)
+            toast.success("Login Successful");
 
-            toast.success("Welcome back");
-
-            router.push("/dashboard");
+            // Give NextAuth a brief millisecond to register the client cookie before moving
             router.refresh();
-        } catch {
+            router.push("/dashboard");
+
+        } catch (error) {
+            console.error("Catch block triggered:", error);
             toast.error("Failed to sign in");
         } finally {
             setLoading(false);
         }
     }
-
     return (
         <div className="min-h-screen flex items-center justify-center px-4 bg-white">
             <Toaster />
