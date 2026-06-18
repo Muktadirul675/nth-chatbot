@@ -1,0 +1,164 @@
+<div id="chat-widget">
+
+    <input type="checkbox" id="chat-toggle" />
+
+    <label id="chat-bubble" for="chat-toggle">
+        <div class="bubble-inner">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde" alt="">
+        </div>
+    </label>
+
+    <div id="chat-box">
+        <iframe src="https://nth-chatbot.mesawestmarketingpartners.com/chatbot" frameborder="0"></iframe>
+    </div>
+
+</div>
+
+<style>
+    #chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999999;
+        font-family: sans-serif;
+    }
+
+    #chat-toggle {
+        display: none;
+    }
+
+    #chat-bubble {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #2563eb;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.25s ease;
+    }
+
+    #chat-bubble img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+    }
+
+    #chat-bubble:hover {
+        transform: scale(1.05);
+    }
+
+    .bubble-inner {
+        pointer-events: none;
+    }
+
+    #chat-box {
+        width: 360px;
+        height: 520px;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+        position: absolute;
+        right: 0;
+        bottom: 0;
+
+        transform: translateX(120%);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    #chat-box iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    #chat-toggle:checked ~ #chat-box {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    #chat-toggle:checked ~ #chat-bubble {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.5);
+    }
+
+    @media (max-width: 768px) {
+        #chat-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        #chat-toggle:checked ~ #chat-box {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+function getOrCreateUID() {
+    let uid = localStorage.getItem("chat_uid");
+
+    if (!uid) {
+        uid = (crypto.randomUUID)
+            ? crypto.randomUUID()
+            : "uid-" + Math.random().toString(36).substring(2) + Date.now();
+
+        localStorage.setItem("chat_uid", uid);
+    }
+
+    return uid;
+}
+
+window.addEventListener("load", function () {
+
+    const uid = getOrCreateUID();
+
+    fetch(`https://nth-chatbot.mesawestmarketingpartners.com/api/visit?uid=${uid}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            referrer: document.referrer || window.location.href
+        })
+    }).catch(err => console.error("Visit error:", err));
+
+    const toggle = document.getElementById("chat-toggle");
+
+    if (window.innerWidth > 768) {
+        toggle.checked = true;
+    }
+});
+
+window.addEventListener("message", function (event) {
+
+    if (event.origin !== "https://nth-chatbot.mesawestmarketingpartners.com") return;
+
+    const toggle = document.getElementById("chat-toggle");
+
+    if (event.data?.type === "CLOSE_CHAT") {
+        toggle.checked = false;
+    }
+
+    if (event.data?.type === "OPEN_CHAT") {
+        toggle.checked = true;
+    }
+});
+</script>
