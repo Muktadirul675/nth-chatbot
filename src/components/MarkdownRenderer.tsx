@@ -90,7 +90,7 @@ export default function MarkdownRenderer({
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary underline underline-offset-4"
+              className="text-white font-semibold underline underline-offset-4"
             >
               {children}
             </a>
