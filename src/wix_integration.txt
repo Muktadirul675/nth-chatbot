@@ -112,24 +112,73 @@
 </style>
 
 <script>
+/* =========================
+   TTL STORAGE HELPERS
+========================= */
+
+function setWithExpiry(key, value, ttlMs) {
+    const item = {
+        value,
+        expires: Date.now() + ttlMs
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+}
+
+function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) return null;
+
+    try {
+        const item = JSON.parse(itemStr);
+
+        if (Date.now() > item.expires) {
+            localStorage.removeItem(key);
+            return null;
+        }
+
+        return item.value;
+    } catch {
+        localStorage.removeItem(key);
+        return null;
+    }
+}
+
+/* =========================
+   UID (24 HOURS)
+========================= */
+
 function getOrCreateUID() {
-    let uid = localStorage.getItem("chat_uid");
+    let uid = getWithExpiry("chat_uid");
 
     if (!uid) {
-        uid = (crypto.randomUUID)
+        uid = crypto.randomUUID
             ? crypto.randomUUID()
             : "uid-" + Math.random().toString(36).substring(2) + Date.now();
 
-        localStorage.setItem("chat_uid", uid);
+        setWithExpiry("chat_uid", uid, 24 * 60 * 60 * 1000);
     }
 
     return uid;
 }
 
+/* =========================
+   CHAT STATE (1 HOUR)
+========================= */
+
+const CHAT_STATE_KEY = "chat_state";
+const CHAT_TTL = 60 * 60 * 1000;
+
+/* =========================
+   INIT
+========================= */
+
 window.addEventListener("load", function () {
+
+    const toggle = document.getElementById("chat-toggle");
 
     const uid = getOrCreateUID();
 
+    /* Send visit */
     fetch(`https://nth-chatbot.mesawestmarketingpartners.com/api/visit?uid=${uid}`, {
         method: "POST",
         headers: {
@@ -140,12 +189,43 @@ window.addEventListener("load", function () {
         })
     }).catch(err => console.error("Visit error:", err));
 
-    const toggle = document.getElementById("chat-toggle");
+    /* Restore chat state */
+    const savedState = getWithExpiry(CHAT_STATE_KEY);
 
     if (window.innerWidth > 768) {
-        toggle.checked = true;
+
+        if (savedState === "closed") {
+            toggle.checked = false;
+        } else if (savedState === "open") {
+            toggle.checked = true;
+        } else {
+            // First visit or expired → auto open
+            toggle.checked = true;
+
+            setWithExpiry(CHAT_STATE_KEY, "open", CHAT_TTL);
+        }
     }
 });
+
+/* =========================
+   USER ACTION TRACKING
+========================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("chat-toggle");
+
+    toggle.addEventListener("change", () => {
+        setWithExpiry(
+            CHAT_STATE_KEY,
+            toggle.checked ? "open" : "closed",
+            CHAT_TTL
+        );
+    });
+});
+
+/* =========================
+   IFRAME CONTROL (POSTMESSAGE)
+========================= */
 
 window.addEventListener("message", function (event) {
 
@@ -155,10 +235,14 @@ window.addEventListener("message", function (event) {
 
     if (event.data?.type === "CLOSE_CHAT") {
         toggle.checked = false;
+
+        setWithExpiry(CHAT_STATE_KEY, "closed", CHAT_TTL);
     }
 
     if (event.data?.type === "OPEN_CHAT") {
         toggle.checked = true;
+
+        setWithExpiry(CHAT_STATE_KEY, "open", CHAT_TTL);
     }
 });
 </script>
