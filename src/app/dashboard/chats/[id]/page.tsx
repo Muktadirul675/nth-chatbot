@@ -1,6 +1,11 @@
 import AIMessage from "@/components/ui/AIMessage";
 import UserMessage from "@/components/ui/UserMessage";
 import { getChat } from "@/services/chats";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+    title : "Chat Transcript"
+}
 
 type Lead = {
     name: string,

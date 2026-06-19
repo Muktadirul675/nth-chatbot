@@ -1,9 +1,13 @@
 import { getInformations } from "@/services/informations";
 import Link from "next/link";
 import { BiPlus } from "react-icons/bi";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+    title: "Information"
+}
 
 export const dynamic = "force-dynamic"
-
 export default async function InformationPage({
   searchParams,
 }: {

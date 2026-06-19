@@ -6,6 +6,7 @@ import Topbar from "@/components/chatbot/Topbar";
 import TrackUID from "@/components/chatbot/TrackUID";
 
 export default function ChatbotPage(){
+    
     return <div className="flex flex-col h-screen">
         <TrackUID/>
         <Topbar/>

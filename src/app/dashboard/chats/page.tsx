@@ -1,6 +1,10 @@
 import ChatsTable from "@/components/tables/ChatsTable";
 import { getChats } from "@/services/chats";
+import { Metadata } from "next";
 
+export const metadata : Metadata = {
+    title: "Chat Sessions"
+}
 
 export default async function ChatsPage({ searchParams }: { searchParams: Promise<{ page: number }> }) {
     const { page } = await searchParams;

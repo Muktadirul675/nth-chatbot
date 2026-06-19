@@ -1,6 +1,9 @@
 import LeadsTable from "@/components/tables/LeadsTable";
 import { getLeads } from "@/services/leads";
-
+import { Metadata } from "next";
+export const metadata : Metadata = {
+    title: "Leads"
+}
 export default async function LeadsPage({ searchParams }: { searchParams: Promise<{ page: number }> }) {
     const { page } = await searchParams;
     const leads = await getLeads(page ?? 1)

@@ -3,6 +3,11 @@ import LeadsTable from "@/components/tables/LeadsTable"
 import { getEngagementRate, getEscalationRate, getLeadCaptureRate, getLeadQualificationRate } from "@/services/analytics"
 import { getLatestChats } from "@/services/chats"
 import { getLatestLeads } from "@/services/leads"
+import { Metadata } from "next"
+
+export const metadata : Metadata = {
+    title: "Dashboard"
+}
 
 export default async function DashboardPage() {
     const lead_capture_rate = await getLeadCaptureRate()

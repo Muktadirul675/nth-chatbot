@@ -1,6 +1,11 @@
 import { auth } from "@/auth";
 import { UserRole } from "@/generated/prisma/enums";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata : Metadata = {
+    title: "Users"
+}
 
 export default async function UsersLayout({ children }: { children: React.ReactNode }) {
     // const session = await auth()
